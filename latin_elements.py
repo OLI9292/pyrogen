@@ -23,8 +23,8 @@ middle_elements_of_verbs = {
 }
 
 latin_verb_endings = {
-    "he/she/it": "t",
-    "they": "nt"
+    "singular": "t",
+    "plural": "nt"
 }
 
 latin_noun_endings = {
