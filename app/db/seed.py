@@ -74,9 +74,10 @@ def fill_tables(language):
      for [word, morphemes] in word_mocks[language]]
 
 
-def seed_db(language):
+def seed_db(language, describe=False):
     print "\n----------------\nseeding database\n----------------\n"
     drop_db()
     create_schema()
     fill_tables(language)
-    describe_db()
+    if describe:
+        describe_db()

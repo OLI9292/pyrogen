@@ -14,11 +14,13 @@ class Morpheme(base):
     id = Column(Integer, primary_key=True)
     value = Column(String)
     free = Column(Boolean, default=True)
+    copula = Column(Boolean, default=False)
     grammar = Column(Enum("noun", "verb", "adjective", name="GrammarTypes"))
 
 
 morpheme_mocks = {
     "english": [
+        Morpheme(value="is", grammar="verb", copula=True),
         Morpheme(value="carn", free=False),
         Morpheme(value="vor", free=False),
         Morpheme(value="sad", grammar="adjective"),
@@ -27,8 +29,10 @@ morpheme_mocks = {
         Morpheme(value="run", grammar="verb")
     ],
     "latin": [
-        Morpheme(value="equ", free=False, grammar="noun"),
-        Morpheme(value="lup", free=False, grammar="noun"),
-        Morpheme(value="amare", free=False, grammar="verb"),
+        Morpheme(value="equ", grammar="noun"),
+        Morpheme(value="est", copula=True, grammar="verb"),
+        Morpheme(value="lup", grammar="noun"),
+        Morpheme(value="amare", grammar="verb"),
+        Morpheme(value="pulcher", grammar="adjective"),
     ]
 }
