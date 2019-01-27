@@ -2,9 +2,15 @@ from sqlalchemy import inspect
 
 from index import session, base, db
 
-from tables.morpheme import Morpheme, morpheme_mocks
-from tables.word import Word, word_mocks
-from tables.declension import Declension, declension_mocks
+from tables.morpheme import Morpheme
+from mocks.morpheme import morpheme_mocks
+
+from tables.declension import Declension
+from mocks.declension import declension_mocks
+
+from tables.word import Word
+from mocks.word import word_mocks
+
 from join_tables.word_morpheme import WordMorpheme
 
 #
@@ -25,9 +31,10 @@ def add(obj, commit_and_return_id=False):
         return obj.id
 
 
-def create_word_and_morpheme_relationships(word, morphemes):
+def create_word_and_morpheme_relationships(data):
+    word = Word(value=data["value"], grammar=data["grammar"])
     word_id = add(word, True)
-    for index, morpheme in enumerate(morphemes):
+    for index, morpheme in enumerate(data["morphemes"]):
         morpheme_id = session.query(Morpheme).filter(
             Morpheme.value == morpheme).one().id
         word_morpheme = WordMorpheme(
@@ -68,10 +75,13 @@ def create_schema():
 
 def fill_tables(language):
     print "filling tables"
-    [add(declension) for declension in declension_mocks[language]]
-    [add(morpheme) for morpheme in morpheme_mocks[language]]
-    [create_word_and_morpheme_relationships(word, morphemes)
-     for [word, morphemes] in word_mocks[language]]
+    [add(Declension(name=d.get("name"), data=d.get("data")))
+     for d in declension_mocks[language]]
+
+    [add(Morpheme(value=m.get("value"), grammar=m.get("grammar"),
+                  copula=m.get("copula"), free=m.get("free"), declension_id=m.get("declension_id"))) for m in morpheme_mocks[language]]
+
+    [create_word_and_morpheme_relationships(w) for w in word_mocks[language]]
 
 
 def seed_db(language, describe=False):
