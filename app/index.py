@@ -1,6 +1,5 @@
 import argparse
 import sys
-import sys
 from db.seed import seed_db
 from game.index import list_questions
 
