@@ -3,82 +3,56 @@ from sqlalchemy.sql.expression import func, select
 
 from db.index import session
 
-from db.tables.article import Article
-from db.tables.morpheme import Morpheme
-from db.tables.word import Word
-from db.tables.declension import Declension
+from db.tables.dictionary import DictionaryModel
+from db.tables.morpheme import MorphemeModel
 
-from db.join_tables.word_morpheme import WordMorpheme
+from data.clause_types import clause_types
 
 from lib.helpers import find_path_in_dict
 
-
-def list_questions():
-    print "\n----------------\ngenerate sentences\n----------------\n"
-    words = session.query(Word)
-    morphemes = session.query(Morpheme)
-    for i in range(20):
-        create_clause(words, morphemes)
-
-
-clause_types = {
-    "SVO": {
-        "full_name": "subject verb object",
-        "elements": ["subject", "verb", "object"]
-    },
-    "SV": {
-        "full_name": "subject verb",
-        "elements": ["subject", "verb"]
-    },
-    "S=P": {
-        "full_name": "subject copula predicate",
-        "elements": ["subject", "copula", "predicate"]
-    },
-    "S=": {
-        "full_name": "existential use of the copula",
-        "elements": ["subject", "copula"]
-    }
-}
+tenses = ["present", "past"]
+clauses = clause_types.keys()
 
 
 def get_noun(lower_animacy=1, upper_animacy=10):
-    results = session.query(Morpheme).filter(
-        Morpheme.grammar == "noun",
-        Morpheme.animacy <= upper_animacy,
-        Morpheme.animacy >= lower_animacy,
+    results = session.query(MorphemeModel).filter(
+        MorphemeModel.grammar == "noun",
+        MorphemeModel.animacy <= upper_animacy,
+        MorphemeModel.animacy >= lower_animacy,
     ).all()
     return random.choice(results)
 
 
 def get_adjective():
-    results = session.query(Morpheme).filter(
-        Morpheme.grammar == "adjective").all()
+    results = session.query(MorphemeModel).filter(
+        MorphemeModel.grammar == "adjective").all()
     return random.choice(results)
 
 
 def get_copula():
-    return session.query(Morpheme).filter(Morpheme.copula == True).first()
+    return session.query(MorphemeModel).filter(MorphemeModel.copula == True).first()
 
 
 def get_verb(use_transitive):
     filters = (
-        Morpheme.grammar == "verb",
-        Morpheme.intransitive == True
+        MorphemeModel.grammar == "verb",
+        MorphemeModel.intransitive == True
     ) if use_transitive else (
-        Morpheme.grammar == "verb",
-        Morpheme.intransitive == True
+        MorphemeModel.grammar == "verb",
+        MorphemeModel.intransitive == True
     )
-    results = session.query(Morpheme).filter(*filters).all()
+    results = session.query(MorphemeModel).filter(*filters).all()
     return random.choice(results)
 
 
-def decline_noun(value, declension, is_subject, is_object):
+def decline_noun(value, dictionary, is_subject, is_object):
     if is_subject:
-        value += declension["singular"]["nominative"]
+        value += dictionary["singular"]["nominative"]
     elif is_object:
-        value += declension["singular"]["accusative"]
+        value += dictionary["singular"]["accusative"]
 
-    article = session.query(Article).first()
+    article = session.query(DictionaryModel).filter(
+        DictionaryModel.id == "article").first()
 
     if article:
         return article.data["definite"] + " " + value
@@ -86,42 +60,44 @@ def decline_noun(value, declension, is_subject, is_object):
     return value
 
 
-def decline_verb(value, irregular, conjugation, tense, number, person):
+def decline_verb(value, irregular, dictionary, tense, number, person):
     keys = [tense, number, person]
     if irregular:
         irregular_value = find_path_in_dict(keys, irregular)
         if irregular_value:
             return irregular_value
-    ending = find_path_in_dict(keys, conjugation)
+    ending = find_path_in_dict(keys, dictionary)
     if ending:
         value += ending
     return value
 
 
-def decline_adjective(value, declension, is_subject):
+def decline_adjective(value, dictionary, is_subject):
     if is_subject:
-        return value + declension["singular"]["nominative"]
+        return value + dictionary["singular"]["nominative"]
 
 
-def create_clause(words, morphemes):
-    # key = "SVO"
-    key = random.choice(clause_types.keys())
+def create_clause(template_key, tense_key):
+    template_key = random.choice(
+        clauses) if template_key == "random" else template_key
+    clause = clause_types[template_key]
 
-    clause = clause_types[key]["elements"]
-    use_transitive = key == "SVO"
+    print "generating elements for " + clause["full_name"]
 
-    tense = random.choice(["present", "past"])
+    tense = random.choice(tenses) if tense_key == "random" else tense_key
+
+    use_transitive = template_key == "SVO"
     person = ""
     number = "singular"
 
     sentence = []
 
-    for element in clause:
+    for element in clause["elements"]:
         if element == "subject":
             noun = get_noun(1, 2)
             person = str(noun.person)
             declined = decline_noun(
-                noun.value, noun.declension.data, True, False)
+                noun.value, noun.dictionary.data, True, False)
             sentence.append(declined)
 
         elif element == "verb":
@@ -129,7 +105,7 @@ def create_clause(words, morphemes):
             declined = decline_verb(
                 verb.value,
                 verb.irregular,
-                verb.conjugation.data,
+                verb.dictionary.data,
                 tense,
                 number,
                 person
@@ -142,7 +118,7 @@ def create_clause(words, morphemes):
         elif element == "object":
             noun = get_noun()
             declined = decline_noun(
-                noun.value, noun.declension.data, False, True)
+                noun.value, noun.dictionary.data, False, True)
             sentence.append(declined)
 
         elif element == "predicate":
@@ -156,5 +132,4 @@ def create_clause(words, morphemes):
 
             sentence.append(adjective.value)
 
-    # print "\n", key
-    print " ".join(sentence)
+    return " ".join(sentence)

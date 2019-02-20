@@ -1,14 +1,36 @@
-english_conjugation_mocks = [
+latin_declension_mocks = [
     {
+        "id": "noun first",
         "data": {
-            "present singular 3": "s",
-            "past": "ed"
+            "singular": {
+                "nominative": "a",
+                "accusative": "am",
+            },
+            "plural": {
+                "nominative": "ae",
+                "accusative": "as",
+            }
+        }
+    },
+    {
+        "id": "noun second",
+        "data":  {
+            "singular": {
+                "nominative": "us",
+                "accusative": "um",
+            },
+            "plural": {
+                "nominative": "i",
+                "accusative": "os",
+            }
         }
     }
 ]
 
+
 latin_conjugation_mocks = [
     {
+        "id": "verb first",
         "data": {
             "present": {
                 "singular": {
@@ -37,8 +59,3 @@ latin_conjugation_mocks = [
         }
     }
 ]
-
-conjugation_mocks = {
-    "english": english_conjugation_mocks,
-    "latin": latin_conjugation_mocks
-}
