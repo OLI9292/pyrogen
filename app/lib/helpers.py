@@ -36,3 +36,9 @@ def find_path_in_dict(keys, obj):
                     copy_obj = copy_obj[key]
 
     return ""
+
+
+def prepend_verb_ending(language, tense):
+    if (language == "english") & (tense == "future"):
+        return True
+    return False

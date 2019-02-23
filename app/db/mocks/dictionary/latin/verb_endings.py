@@ -1,36 +1,6 @@
-latin_declension_mocks = [
+latin_verb_endings = [
     {
-        "id": "noun first",
-        "data": {
-            "singular": {
-                "nominative": "a",
-                "accusative": "am",
-            },
-            "plural": {
-                "nominative": "ae",
-                "accusative": "as",
-            }
-        }
-    },
-    {
-        "id": "noun second",
-        "data":  {
-            "singular": {
-                "nominative": "us",
-                "accusative": "um",
-            },
-            "plural": {
-                "nominative": "i",
-                "accusative": "os",
-            }
-        }
-    }
-]
-
-
-latin_conjugation_mocks = [
-    {
-        "id": "verb first",
+        "id": "latin verb first",
         "data": {
             "present": {
                 "singular": {
@@ -54,6 +24,18 @@ latin_conjugation_mocks = [
                     "1": "imis",
                     "2": "istis",
                     "3": "erunt",
+                }
+            },
+            "future": {
+                "singular": {
+                    "1": "abo",
+                    "2": "abis",
+                    "3": "abit",
+                },
+                "plural": {
+                    "1": "abimus",
+                    "2": "abitis",
+                    "3": "abunt",
                 }
             }
         }

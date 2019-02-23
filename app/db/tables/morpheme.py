@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import JSON
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 
+from db.join_tables.word_morpheme import WordMorphemeModel
 from db.index import base, session
 
 
@@ -29,6 +30,15 @@ class MorphemeModel(base):
     dictionary = relationship('DictionaryModel')
 
 
+def resolve_word(self, info, id):
+    try:
+        word = session.query(MorphemeModel).get(id)
+        return word
+    except Exception as error:
+        print "ERR:", error
+        return {"error": error}
+
+
 class Morpheme(SQLAlchemyObjectType):
     class Meta:
         model = MorphemeModel
@@ -44,8 +54,19 @@ class Morpheme(SQLAlchemyObjectType):
             "irregular",
             "grammar",
             "language_id",
-            "dictionary_id"
+            "language",
+            "dictionary_id",
+            "derived_from"
         )
+
+
+def resolve_morphemes(self, info):
+    try:
+        results = session.query(MorphemeModel).all()
+        return results
+    except Exception as error:
+        print "ERR:", error
+        return {"error": error}
 
 
 class CreateMorpheme(graphene.Mutation):
@@ -89,12 +110,3 @@ class CreateMorpheme(graphene.Mutation):
         except Exception as error:
             print "ERR:", error
             return {"error": error}
-
-
-def resolve_morphemes(self, info):
-    try:
-        results = session.query(MorphemeModel).all()
-        return results
-    except Exception as error:
-        print "ERR:", error
-        return {"error": error}

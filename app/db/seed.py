@@ -6,7 +6,6 @@ from sqlalchemy import inspect
 from index import session, base, db
 
 from tables.language import LanguageModel
-from mocks.language import language_mocks
 
 from tables.dictionary import DictionaryModel
 from mocks.dictionary.index import dictionary_mocks
@@ -14,6 +13,8 @@ from mocks.dictionary.index import dictionary_mocks
 from tables.morpheme import MorphemeModel
 from mocks.morpheme.index import morpheme_mocks
 
+from join_tables.word_morpheme import WordMorphemeModel
+from mocks.word_morpheme import word_morpheme_mocks
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--lang', help='Language to seed the database')
@@ -45,7 +46,7 @@ def add(model):
 def fill_tables(language):
     print "filling tables:", table_names()
 
-    [add(LanguageModel(name=l.get("name"))) for l in language_mocks]
+    add(LanguageModel(name=language))
 
     [add(DictionaryModel(
         id=d.get("id"),
@@ -54,6 +55,7 @@ def fill_tables(language):
     )) for d in dictionary_mocks[language]]
 
     [add(MorphemeModel(
+        id=m.get("id"),
         value=m.get("value"),
         grammar=m.get("grammar"),
         copula=m.get("copula"),
@@ -69,7 +71,20 @@ def fill_tables(language):
 
 
 def seed_db():
-    language = args.lang or "english"
+    LANGUAGES = ["english", "latin"]
+
     drop_db()
     create_schema()
-    fill_tables(language)
+
+    if args.lang != None:
+        fill_tables(args.lang)
+    else:
+        for language in LANGUAGES:
+            fill_tables(language)
+
+        [add(WordMorphemeModel(
+            word_id=w.get("word_id"),
+            morpheme_id=w.get("morpheme_id"),
+            value=w.get("value"),
+            start_index=w.get("start_index")
+        )) for w in word_morpheme_mocks]

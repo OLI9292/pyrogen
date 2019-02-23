@@ -1,29 +1,10 @@
 english_verb_endings = [
     {
-        "id": "noun first",
+        "id": "verb first",
         "data": {
-            "singular": {
-                "nominative": "",
-                "accusative": "",
-            },
-            "plural": {
-                "nominative": "s",
-                "accusative": "s",
-            }
-        },
-        "language_id": 1
-    },
-    {
-        "id": "noun I",
-        "data": {
-            "singular": {
-                "nominative": "I",
-                "accusative": "me",
-            },
-            "plural": {
-                "nominative": "we",
-                "accusative": "us",
-            }
+            "present singular 3": "s",
+            "past": "ed",
+            "future": "will"
         },
         "language_id": 1
     }
