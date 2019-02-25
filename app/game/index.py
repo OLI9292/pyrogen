@@ -106,7 +106,7 @@ def create_clause(language_id, template_key, tense_key, number_key):
         CLAUSES) if template_key == "random" else template_key
     clause = clause_types[template_key]
 
-    print "generating elements for " + clause["full_name"]
+    print("generating elements for " + clause["full_name"])
 
     use_transitive = template_key == "SVO"
     article = article_for_language(language_id)

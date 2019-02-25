@@ -35,7 +35,7 @@ def resolve_word(self, info, id):
         word = session.query(MorphemeModel).get(id)
         return word
     except Exception as error:
-        print "ERR:", error
+        print("ERR:", error)
         return {"error": error}
 
 
@@ -65,7 +65,7 @@ def resolve_morphemes(self, info):
         results = session.query(MorphemeModel).all()
         return results
     except Exception as error:
-        print "ERR:", error
+        print("ERR:", error)
         return {"error": error}
 
 
@@ -108,5 +108,5 @@ class CreateMorpheme(graphene.Mutation):
             session.commit()
             return CreateMorpheme(morpheme=morpheme)
         except Exception as error:
-            print "ERR:", error
+            print("ERR:", error)
             return {"error": error}

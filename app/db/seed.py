@@ -27,7 +27,7 @@ def table_names():
 
 
 def drop_db():
-    print "dropping tables:", table_names()
+    print("dropping tables:", table_names())
     base.metadata.drop_all(db)
     session.commit()
 
@@ -35,7 +35,7 @@ def drop_db():
 def create_schema():
     base.metadata.create_all(db)
     session.commit()
-    print "creating tables:", table_names()
+    print("creating tables:", table_names())
 
 
 def add(model):
@@ -44,7 +44,7 @@ def add(model):
 
 
 def fill_tables(language):
-    print "filling tables:", table_names()
+    print("filling tables:", table_names())
 
     add(LanguageModel(name=language))
 

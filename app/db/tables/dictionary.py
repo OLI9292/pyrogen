@@ -39,7 +39,7 @@ class CreateDictionary(graphene.Mutation):
             session.commit()
             return CreateDictionary(dictionary=dictionary)
         except Exception as error:
-            print "ERR:", error
+            print("ERR:", error)
             return {"error": error}
 
 
@@ -48,5 +48,5 @@ def resolve_dictionaries(self, info):
         results = session.query(DictionaryModel).all()
         return results
     except Exception as error:
-        print "ERR:", error
+        print("ERR:", error)
         return {"error": error}

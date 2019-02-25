@@ -36,7 +36,7 @@ class CreateLanguage(graphene.Mutation):
             session.commit()
             return CreateLanguage(Language=Language)
         except Exception as error:
-            print "ERR:", error
+            print("ERR:", error)
             return {"error": error}
 
 
@@ -45,5 +45,5 @@ def resolve_languages(self, info):
         results = session.query(LanguageModel).all()
         return results
     except Exception as error:
-        print "ERR:", error
+        print("ERR:", error)
         return {"error": error}
