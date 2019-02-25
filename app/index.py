@@ -82,10 +82,8 @@ app.add_url_rule(
         schema=schema,
         graphiql=True
     )
-
-
 )
 
 if __name__ == '__main__':
-    seed_db()
+    # seed_db()
     app.run()
