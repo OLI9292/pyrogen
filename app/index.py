@@ -9,6 +9,7 @@ from flask_cors import CORS
 import graphene
 from flask_graphql import GraphQLView
 
+import db.seed
 from db.seed import seed_db, session
 from db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
 from db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
