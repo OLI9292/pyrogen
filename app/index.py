@@ -7,7 +7,6 @@ from flask_cors import CORS
 
 import graphene
 from flask_graphql import GraphQLView
-from graphql import GraphQLError
 
 from db.seed import seed_db, session
 from db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
@@ -39,11 +38,7 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_clauses(self, info, language_id, template, tense, number):
-        try:
-            return json.dumps([create_clause(language_id, template, tense, number) for i in range(8)])
-        except Exception as error:
-            print "ERR:", error
-            raise GraphQLError(error.message)
+        return json.dumps([create_clause(language_id, template, tense, number) for i in range(8)])
 
     derived_from = graphene.List(Derivation, id=graphene.Int())
 
