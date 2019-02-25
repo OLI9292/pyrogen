@@ -8,9 +8,9 @@ from flask_cors import CORS
 import graphene
 from flask_graphql import GraphQLView
 
-from app.db.seed import seed_db, session
-from db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
-from db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
+from .db.seed import seed_db, session
+from .db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
+from .db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
 from db.tables.language import LanguageModel, Language, CreateLanguage, resolve_languages
 from db.join_tables.word_morpheme import WordMorphemeModel, WordMorpheme
 from game.index import create_clause
