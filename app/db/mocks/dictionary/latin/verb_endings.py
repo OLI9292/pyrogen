@@ -1,14 +1,6 @@
-english_conjugation_mocks = [
+latin_verb_endings = [
     {
-        "data": {
-            "present singular 3": "s",
-            "past": "ed"
-        }
-    }
-]
-
-latin_conjugation_mocks = [
-    {
+        "id": "latin verb first",
         "data": {
             "present": {
                 "singular": {
@@ -33,12 +25,19 @@ latin_conjugation_mocks = [
                     "2": "istis",
                     "3": "erunt",
                 }
+            },
+            "future": {
+                "singular": {
+                    "1": "abo",
+                    "2": "abis",
+                    "3": "abit",
+                },
+                "plural": {
+                    "1": "abimus",
+                    "2": "abitis",
+                    "3": "abunt",
+                }
             }
         }
     }
 ]
-
-conjugation_mocks = {
-    "english": english_conjugation_mocks,
-    "latin": latin_conjugation_mocks
-}

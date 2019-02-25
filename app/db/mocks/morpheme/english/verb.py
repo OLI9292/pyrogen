@@ -1,18 +1,14 @@
 english_verbs = [
     {
         "value": "is",
-        "grammar": "verb",
-        "copula": True
-    },
-    {
-        "value": "run",
         "irregular": {
-            "past": "ran"
+            "past singular": "was",
+            "past plural": "were",
+            "future": "will be"
         },
         "grammar": "verb",
-        "transitive": True,
-        "intransitive": True,
-        "conjugation_id": 1
+        "copula": True,
+        "language_id": 1
     },
     {
         "value": "know",
@@ -22,20 +18,23 @@ english_verbs = [
         "grammar": "verb",
         "transitive": True,
         "intransitive": True,
-        "conjugation_id": 1
+        "dictionary_id": "verb first",
+        "language_id": 1
     },
     {
         "value": "laugh",
         "grammar": "verb",
         "intransitive": True,
-        "conjugation_id": 1
+        "dictionary_id": "verb first",
+        "language_id": 1
     },
     {
         "value": "walk",
         "grammar": "verb",
         "transitive": True,
         "intransitive": True,
-        "conjugation_id": 1
+        "dictionary_id": "verb first",
+        "language_id": 1
     },
     {
         "value": "run",
@@ -45,6 +44,7 @@ english_verbs = [
         "grammar": "verb",
         "transitive": True,
         "intransitive": True,
-        "conjugation_id": 1
+        "dictionary_id": "verb first",
+        "language_id": 1
     }
 ]
