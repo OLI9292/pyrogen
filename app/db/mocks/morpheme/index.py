@@ -1,4 +1,4 @@
-from lib.helpers import flatten
+from app.lib.helpers import flatten
 
 from english.verb import english_verbs
 from english.noun import english_nouns

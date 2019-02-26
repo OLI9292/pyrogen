@@ -7,8 +7,8 @@ from sqlalchemy.dialects.postgresql import JSON
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 
-from db.join_tables.word_morpheme import WordMorphemeModel
-from db.index import base, session
+from app.db.join_tables.word_morpheme import WordMorphemeModel
+from app.db.index import base, session
 
 
 class MorphemeModel(base):

@@ -44,7 +44,7 @@ def add(model):
 
 
 def fill_tables(language):
-    print("filling tables:", table_names())
+    print("filling " + language + " tables:", table_names())
 
     add(LanguageModel(name=language))
 

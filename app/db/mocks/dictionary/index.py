@@ -1,4 +1,4 @@
-from lib.helpers import flatten
+from app.lib.helpers import flatten
 
 from english.noun_endings import english_noun_endings
 from english.verb_endings import english_verb_endings
