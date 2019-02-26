@@ -1,1 +1,1 @@
-web: cd app && python index.py 
+web: python index.py 

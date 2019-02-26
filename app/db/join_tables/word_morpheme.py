@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 
-from db.index import base
+from app.db.index import base
 
 
 class WordMorphemeModel(base):

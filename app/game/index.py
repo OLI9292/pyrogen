@@ -1,15 +1,15 @@
 import random
 from sqlalchemy.sql.expression import func, select
 
-from db.index import session
+from app.db.index import session
 
-from db.tables.dictionary import DictionaryModel
-from db.tables.language import LanguageModel
-from db.tables.morpheme import MorphemeModel
+from app.db.tables.dictionary import DictionaryModel
+from app.db.tables.language import LanguageModel
+from app.db.tables.morpheme import MorphemeModel
 
-from data.clause_types import clause_types
+from .data.clause_types import clause_types
 
-from lib.helpers import find_path_in_dict, prepend_verb_ending
+from app.lib.helpers import find_path_in_dict, prepend_verb_ending
 
 TENSES = ["present", "past", "future"]
 NUMBERS = ["singular", "plural"]

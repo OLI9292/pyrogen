@@ -1,3 +1,5 @@
+import argparse
+import sys
 import json
 import os
 from flask import Flask
@@ -9,12 +11,12 @@ from flask_cors import CORS
 import graphene
 from flask_graphql import GraphQLView
 
-from db.seed import seed_db, session
-from db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
-from db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
-from db.tables.language import LanguageModel, Language, CreateLanguage, resolve_languages
-from db.join_tables.word_morpheme import WordMorphemeModel, WordMorpheme
-from game.index import create_clause
+from app.db.seed import seed_db, session
+from app.db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
+from app.db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
+from app.db.tables.language import LanguageModel, Language, CreateLanguage, resolve_languages
+from app.db.join_tables.word_morpheme import WordMorphemeModel, WordMorpheme
+from app.game.index import create_clause
 
 
 class Derivation(graphene.ObjectType):
@@ -80,7 +82,15 @@ app.add_url_rule(
     )
 )
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--lang', help='Language to seed the database')
+parser.add_argument('--seed', help='Seed database')
+args = parser.parse_args()
+
+
 if __name__ == '__main__':
-    # seed_db()
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', debug=False, port=port)
+    if args.seed:
+        seed_db(args.lang)
+    else:
+        port = int(os.environ.get("PORT", 5000))
+        app.run(host='0.0.0.0', debug=False, port=port)

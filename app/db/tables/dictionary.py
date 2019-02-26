@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSON
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 
-from db.index import base, session
+from ..index import base, session
 
 
 class DictionaryModel(base):
