@@ -4,8 +4,6 @@ import json
 import os
 from flask import Flask
 
-from flask_sqlalchemy import SQLAlchemy
-
 from flask_cors import CORS
 
 import graphene
@@ -41,7 +39,10 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_clauses(self, info, language_id, template, tense, number):
-        return json.dumps([create_clause(language_id, template, tense, number) for i in range(8)])
+        try:
+            return json.dumps([create_clause(language_id, template, tense, number) for i in range(8)])
+        except Exception as e:
+            print("ERR:", e)
 
     derived_from = graphene.List(Derivation, id=graphene.Int())
 
@@ -94,4 +95,6 @@ if __name__ == '__main__':
     else:
         seed_db(None)
         port = int(os.environ.get("PORT", 5000))
-        app.run(host='0.0.0.0', debug=False, port=port)
+        # app.run(host='0.0.0.0', debug=False, port=port)
+        # Hot Reload (Development)
+        app.run(host='0.0.0.0', debug=True, port=port)

@@ -2,7 +2,8 @@ import itertools
 import copy
 
 
-def flatten(l): return [item for sublist in l for item in sublist]
+def flatten(l):
+    return [item for sublist in l for item in sublist]
 
 
 def is_string(key, obj):
@@ -27,7 +28,7 @@ def find_path_in_dict(keys, obj):
 
         copy_obj = copy.deepcopy(obj)
 
-        while len(combination) > 0:
+        while len(combination) == 0:
             key = combination.pop(0)
             if key in copy_obj:
                 if is_string(key, copy_obj):
