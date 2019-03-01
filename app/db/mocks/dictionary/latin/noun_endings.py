@@ -31,10 +31,10 @@ latin_noun_endings = [
         "data":  {
             "singular": {
                 "nominative": "o",
-                "accusative": "es",
+                "accusative": "em",
             },
             "plural": {
-                "nominative": "i",
+                "nominative": "es",
                 "accusative": "es",
             }
         },

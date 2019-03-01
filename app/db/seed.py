@@ -51,15 +51,17 @@ def fill_tables(language):
         id=m.get("id"),
         value=m.get("value"),
         grammar=m.get("grammar"),
-        copula=m.get("copula"),
         free=m.get("free"),
         animacy=m.get("animacy"),
+        noun_attributes=m.get("noun_attributes"),
+        blacklist=m.get("blacklist"),
         person=m.get("person"),
         irregular=m.get("irregular"),
         transitive=m.get("transitive"),
         intransitive=m.get("intransitive"),
         dictionary_id=m.get("dictionary_id"),
-        language_id=m.get("language_id")
+        language_id=m.get("language_id"),
+        english_morpheme_id=m.get("english_morpheme_id"),
     )) for m in morpheme_mocks[language]]
 
 

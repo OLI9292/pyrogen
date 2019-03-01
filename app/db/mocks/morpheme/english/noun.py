@@ -4,6 +4,7 @@ english_nouns = [
         "grammar": "noun",
         "animacy": 1,
         "person": 1,
+        "noun_attributes": ["personal"],
         "dictionary_id": "noun I",
         "language_id": 1
     },

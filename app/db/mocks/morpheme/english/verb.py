@@ -1,16 +1,5 @@
 english_verbs = [
     {
-        "value": "is",
-        "irregular": {
-            "past singular": "was",
-            "past plural": "were",
-            "future": "will be"
-        },
-        "grammar": "verb",
-        "copula": True,
-        "language_id": 1
-    },
-    {
         "value": "know",
         "irregular": {
             "past": "knew"

@@ -2,7 +2,7 @@ import json
 
 from sqlalchemy import Column, String, Enum, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSON, ARRAY
 
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
@@ -16,18 +16,32 @@ class MorphemeModel(base):
 
     id = Column(Integer, primary_key=True)
     value = Column(String)
-    animacy = Column(Integer)
+
     free = Column(Boolean, default=True)
-    copula = Column(Boolean, default=False)
     person = Column(Integer)
-    transitive = Column(Boolean, default=False)
-    intransitive = Column(Boolean, default=False)
+    animacy = Column(Integer)  # move to noun attributes
+    transitive = Column(Boolean, default=False)  # move to verb attributes
+    intransitive = Column(Boolean, default=False)  # move to verb attributes
+
     irregular = Column(JSON)
-    grammar = Column(Enum("noun", "verb", "adjective", name="GrammarTypes"))
+
+    noun_attributes = Column(ARRAY(String))
+    blacklist = Column(ARRAY(String))
+
+    grammar = Column(Enum(
+        "noun",
+        "verb",
+        "adjective",
+        "copula",
+        "article",
+        name="GrammarTypes"))
 
     language_id = Column(Integer, ForeignKey('language.id'))
     dictionary_id = Column(String, ForeignKey('dictionary.id'))
     dictionary = relationship('DictionaryModel')
+
+    english_morpheme_id = Column(Integer, ForeignKey('morpheme.id'))
+    english_morepheme = relationship('MorphemeModel')
 
 
 def resolve_word(self, info, id):
@@ -47,22 +61,25 @@ class Morpheme(SQLAlchemyObjectType):
             "value",
             "animacy",
             "free",
-            "copula",
             "person",
             "transitive",
             "intransitive",
+            "noun_attributes",
+            "blacklist",
             "irregular",
             "grammar",
             "language_id",
             "language",
             "dictionary_id",
-            "derived_from"
+            "derived_from",
+            "english_morpheme_id"
         )
 
 
 def resolve_morphemes(self, info):
     try:
         results = session.query(MorphemeModel).all()
+        print results
         return results
     except Exception as error:
         print("ERR:", error)
@@ -76,8 +93,9 @@ class CreateMorpheme(graphene.Mutation):
         value = graphene.String(required=False)
         animacy = graphene.Int(required=False)
         free = graphene.Boolean(required=False)
-        copula = graphene.Boolean(required=False)
         person = graphene.Int(required=False)
+        noun_attributes = graphene.List(graphene.String, required=False)
+        blacklist = graphene.List(graphene.String, required=False)
         transitive = graphene.Boolean(required=False)
         intransitive = graphene.Boolean(required=False)
         irregular = graphene.String(required=False)
@@ -97,7 +115,8 @@ class CreateMorpheme(graphene.Mutation):
                 value=kwargs.get("value", None),
                 animacy=kwargs.get("animacy", None),
                 free=kwargs.get("free", None),
-                copula=kwargs.get("copula", None),
+                noun_attributes=kwargs.get("noun_attributes", None),
+                blacklist=kwargs.get("blacklist", None),
                 person=kwargs.get("person", None),
                 transitive=kwargs.get("transitive", None),
                 intransitive=kwargs.get("intransitive", None),

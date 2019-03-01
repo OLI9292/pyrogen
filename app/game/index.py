@@ -18,6 +18,14 @@ TENSES = ["present", "past", "future"]
 NUMBERS = ["singular", "plural"]
 CLAUSES = clause_types.keys()
 
+# PARAMS FOR CLAUSE
+#
+# Clause Type
+# Tense
+# Number
+#
+# Random Noun, Verb, Adjective, Article
+
 
 def create_clause(language_id, template_key, tense_key, number_key):
     try:
@@ -39,59 +47,25 @@ def create_clause(language_id, template_key, tense_key, number_key):
         for element in clause_data["elements"]:
             if element == "subject":
                 params = {"number": number, "_type": "nominative"}
-                data = get_noun(language_id, True, params)
+                add_adjective = True
+                data = get_noun(language_id, add_adjective, params)
                 person = data["person"]
                 clause.append(data["components"])
 
             elif element == "verb":
-                verb = get_verb(language_id, use_transitive)
-
-                declined = decline_verb(
-                    verb.value,
-                    verb.irregular,
-                    verb.dictionary.data,
-                    tense,
-                    number,
-                    person,
-                    language
-                )
-
-                clause.append([{
-                    "id": verb.id,
-                    "value": declined,
-                    "in context": {
-                        "use": "verb",
-                        "tense": tense,
-                        "number": number,
-                        "person": person
-                    }
-                }])
+                params = {"number": number, "tense": tense, "person": person}
+                verb_components = get_verb(language_id, use_transitive, params)
+                clause.append(verb_components)
 
             elif element == "copula":
-                copula = get_copula(language_id)
-
-                declined = decline_verb(
-                    copula.value,
-                    copula.irregular,
-                    {},
-                    tense,
-                    number,
-                    person,
-                    language
-                )
-
-                clause.append([{
-                    "id": copula.id,
-                    "value": declined,
-                    "in context": {
-                        "use": "copula"
-                    }
-                }])
+                params = {"number": number, "tense": tense, "person": person}
+                copula_components = get_copula(language_id, params)
+                clause.append(copula_components)
 
             elif element == "object":
                 params = {"number": number, "_type": "accusative"}
-                components = get_noun(language_id, True, params)
-                clause.append(components)
+                data = get_noun(language_id, True, params)
+                clause.append(data["components"])
 
             elif element == "predicate":
                 adjective = get_adjective(language_id)
@@ -105,10 +79,36 @@ def create_clause(language_id, template_key, tense_key, number_key):
                 }])
 
         flattened = flatten(clause)
-        print flatten, "\n"
         return flattened
+
     except Exception:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         print("ERR: create_clause", exc_type, fname, exc_tb.tb_lineno)
         return []
+
+
+# {
+#   TYPE: { type: String, required: true },
+#   prompt: {
+#     type: [
+#       {
+#         value: String,
+#         isSentenceConnector: Boolean,
+#         highlight: Boolean,
+#         hide: Boolean
+#       }
+#     ]
+#   },
+#   answer: {
+#     type: [
+#       {
+#         value: String,
+#         prefill: Boolean,
+#         isSentenceConnector: Boolean
+#       }
+#     ]
+#   }
+#   redHerrings: { type: [String], required: true },
+#   curriculumId: { type: Schema.Types.ObjectId },
+# }
