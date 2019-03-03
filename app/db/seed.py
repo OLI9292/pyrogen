@@ -1,6 +1,3 @@
-import argparse
-import sys
-
 from sqlalchemy import inspect
 
 from index import session, base, db
@@ -16,10 +13,6 @@ from mocks.morpheme.index import morpheme_mocks
 from join_tables.word_morpheme import WordMorphemeModel
 from mocks.word_morpheme import word_morpheme_mocks
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--lang', help='Language to seed the database')
-args = parser.parse_args()
-
 
 def table_names():
     names = inspect(db).get_table_names()
@@ -27,7 +20,7 @@ def table_names():
 
 
 def drop_db():
-    print "dropping tables:", table_names()
+    print("dropping tables:", table_names())
     base.metadata.drop_all(db)
     session.commit()
 
@@ -35,7 +28,7 @@ def drop_db():
 def create_schema():
     base.metadata.create_all(db)
     session.commit()
-    print "creating tables:", table_names()
+    print("creating tables:", table_names())
 
 
 def add(model):
@@ -44,7 +37,7 @@ def add(model):
 
 
 def fill_tables(language):
-    print "filling tables:", table_names()
+    print("filling " + language + " tables:", table_names())
 
     add(LanguageModel(name=language))
 
@@ -58,26 +51,28 @@ def fill_tables(language):
         id=m.get("id"),
         value=m.get("value"),
         grammar=m.get("grammar"),
-        copula=m.get("copula"),
         free=m.get("free"),
         animacy=m.get("animacy"),
+        noun_attributes=m.get("noun_attributes"),
+        blacklist=m.get("blacklist"),
         person=m.get("person"),
         irregular=m.get("irregular"),
         transitive=m.get("transitive"),
         intransitive=m.get("intransitive"),
         dictionary_id=m.get("dictionary_id"),
-        language_id=m.get("language_id")
+        language_id=m.get("language_id"),
+        english_morpheme_id=m.get("english_morpheme_id"),
     )) for m in morpheme_mocks[language]]
 
 
-def seed_db():
+def seed_db(lang):
     LANGUAGES = ["english", "latin"]
 
     drop_db()
     create_schema()
 
-    if args.lang != None:
-        fill_tables(args.lang)
+    if lang != None:
+        fill_tables(lang)
     else:
         for language in LANGUAGES:
             fill_tables(language)

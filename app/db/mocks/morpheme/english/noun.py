@@ -4,6 +4,7 @@ english_nouns = [
         "grammar": "noun",
         "animacy": 1,
         "person": 1,
+        "noun_attributes": ["personal"],
         "dictionary_id": "noun I",
         "language_id": 1
     },
@@ -36,6 +37,45 @@ english_nouns = [
         "value": "carnivore",
         "grammar": "noun",
         "animacy": 1,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 41,
+        "value": "horse",
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 42,
+        "value": "wolf",
+        "irregular": {
+            "plural": "wolves",
+        },
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 43,
+        "value": "lion",
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 44,
+        "value": "bear",
+        "grammar": "noun",
+        "animacy": 3,
         "person": 3,
         "dictionary_id": "noun first",
         "language_id": 1

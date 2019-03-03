@@ -1,7 +1,7 @@
 word_morpheme_mocks = [
     {
         "word_id": 33,
-        "morpheme_id": 44,
+        "morpheme_id": 49,
         "value": "carn",
         "start_index": 0,
     },

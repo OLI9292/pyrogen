@@ -1,11 +1,5 @@
 latin_verbs = [
     {
-        "value": "est",
-        "grammar": "verb",
-        "copula": True,
-        "language_id": 2
-    },
-    {
         "value": "am",
         "grammar": "verb",
         "transitive": True,
@@ -21,5 +15,14 @@ latin_verbs = [
         "intransitive": True,
         "language_id": 2,
         "dictionary_id": "latin verb first"
+    },
+    {
+        "value": "tim",
+        "grammar": "verb",
+        "transitive": True,
+        "intransitive": True,
+        "language_id": 2,
+        "dictionary_id": "latin verb first",
+        "english_morpheme_id": 87,
     }
 ]
