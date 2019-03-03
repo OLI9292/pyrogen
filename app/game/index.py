@@ -5,9 +5,9 @@ from sqlalchemy.sql.expression import func, select
 
 from app.db.index import session
 
-from query.noun import get_noun, decline_noun
-from query.adjective import get_adjective, decline_adjective
-from query.verb import get_verb, get_copula, decline_verb
+from query.noun import get_noun_components
+from query.adjective import get_adjective_component
+from query.verb import get_verb_component, get_copula_component
 from .data.clause_types import clause_types
 
 from app.db.tables.language import LanguageModel
@@ -18,73 +18,90 @@ TENSES = ["present", "past", "future"]
 NUMBERS = ["singular", "plural"]
 CLAUSES = clause_types.keys()
 
-# PARAMS FOR CLAUSE
-#
-# Clause Type
-# Tense
-# Number
-#
-# Random Noun, Verb, Adjective, Article
+
+def get_english_lanugage_id():
+    return session.query(LanguageModel).filter(
+        LanguageModel.name == "english").first().id
 
 
-def create_clause(language_id, template_key, tense_key, number_key):
+def key_or_random(key, choices):
+    return random.choice(choices) if key == "random" else key
+
+
+def clause_params(language_id, template, tense, number):
+    tense = key_or_random(tense, TENSES)
+    number = key_or_random(number, NUMBERS)
+    template = key_or_random(template, CLAUSES)
+    clause = clause_types[template]
+
+    return {
+        "language_id": language_id,
+        "english_id": get_english_lanugage_id(),
+        "clause_name": clause["full_name"],
+        "clause_elements": clause["elements"],
+        "tense": tense,
+        "number": number,
+        "transitive": template == "SVO",
+        "add_adjective": True,
+        "upper_animacy": 10,
+        "lower_animacy": 1
+    }
+
+
+def create_clause(language_id, template, tense, number):
     try:
-        language = session.query(LanguageModel).get(language_id).name
-        template_key = random.choice(
-            CLAUSES) if template_key == "random" else template_key
-        clause_data = clause_types[template_key]
+        params = clause_params(language_id, template, tense, number)
+        print "\n\n", "clause type: " + params["clause_name"], "\n"
 
-        print("generating elements for " + clause_data["full_name"])
-
-        use_transitive = template_key == "SVO"
-        tense = random.choice(TENSES) if tense_key == "random" else tense_key
-        number = random.choice(
-            NUMBERS) if number_key == "random" else number_key
-
-        person = ""
         clause = []
+        # english_clause = []
 
-        for element in clause_data["elements"]:
+        for element in params["clause_elements"]:
             if element == "subject":
-                params = {"number": number, "_type": "nominative"}
-                add_adjective = True
-                data = get_noun(language_id, add_adjective, params)
-                person = data["person"]
+                data = get_noun_components(
+                    dict(params, **{"_type": "nominative"}))
+                params = data["params"]
                 clause.append(data["components"])
+                # english_clause.append(get_noun_components(
+                #     english_id, params, data["english_noun_id"], data["english_adjective_id"])["components"])
 
             elif element == "verb":
-                params = {"number": number, "tense": tense, "person": person}
-                verb_components = get_verb(language_id, use_transitive, params)
-                clause.append(verb_components)
+                verb_component = get_verb_component(params)
+                clause.append([verb_component])
+                # english_clause.append([get_verb_component(
+                #     english_id, params, verb_component["english_id"])])
 
             elif element == "copula":
-                params = {"number": number, "tense": tense, "person": person}
-                copula_components = get_copula(language_id, params)
-                clause.append(copula_components)
+                copula_components = get_copula_component(params)
+                clause.append([copula_components])
+                # english_clause.append(
+                #     get_copula_component(english_id, params))
 
             elif element == "object":
-                params = {"number": number, "_type": "accusative"}
-                data = get_noun(language_id, True, params)
+                data = get_noun_components(
+                    dict(params, **{"_type": "accusative"}))
                 clause.append(data["components"])
 
-            elif element == "predicate":
-                adjective = get_adjective(language_id)
+                # english_clause.append(get_noun_components(
+                #     english_id, params, data["english_noun_id"], data["english_adjective_id"])["components"])
 
-                clause.append([{
-                    "id": adjective.id,
-                    "value": adjective.value,
-                    "in context": {
-                        "use": "predicate"
-                    }
-                }])
+            elif element == "predicate":
+                adjective_component = get_adjective_component(params)
+                clause.append([adjective_component])
+
+                # english_clause.append([get_adjective_component(
+                #     english_id, params, adjective_component["english_id"])])
 
         flattened = flatten(clause)
+        # english_flattened = flatten(english_clause)
+        # print "\n", " ".join([x["value"] for x in flattened]
+        #                      ), " - ", " ".join([x["value"] for x in english_flattened]), "\n\n"
         return flattened
 
-    except Exception:
+    except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print("ERR: create_clause", exc_type, fname, exc_tb.tb_lineno)
+        print("ERR: create_clause", error, exc_type, fname, exc_tb.tb_lineno)
         return []
 
 

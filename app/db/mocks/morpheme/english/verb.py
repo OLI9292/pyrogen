@@ -35,5 +35,13 @@ english_verbs = [
         "intransitive": True,
         "dictionary_id": "verb first",
         "language_id": 1
+    },
+    {
+        "id": 87,
+        "value": "fear",
+        "grammar": "verb",
+        "transitive": True,
+        "dictionary_id": "verb first",
+        "language_id": 1
     }
 ]

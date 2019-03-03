@@ -23,6 +23,6 @@ latin_verbs = [
         "intransitive": True,
         "language_id": 2,
         "dictionary_id": "latin verb first",
-        "english_morpheme_id": 1,
+        "english_morpheme_id": 87,
     }
 ]

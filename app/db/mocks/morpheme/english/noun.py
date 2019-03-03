@@ -40,5 +40,44 @@ english_nouns = [
         "person": 3,
         "dictionary_id": "noun first",
         "language_id": 1
+    },
+    {
+        "id": 41,
+        "value": "horse",
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 42,
+        "value": "wolf",
+        "irregular": {
+            "plural": "wolves",
+        },
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 43,
+        "value": "lion",
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
+    },
+    {
+        "id": 44,
+        "value": "bear",
+        "grammar": "noun",
+        "animacy": 3,
+        "person": 3,
+        "dictionary_id": "noun first",
+        "language_id": 1
     }
 ]

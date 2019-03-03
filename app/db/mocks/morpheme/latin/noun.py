@@ -6,7 +6,7 @@ latin_nouns = [
         "person": 3,
         "language_id": 2,
         "dictionary_id": "latin noun second",
-        "english_morpheme_id": 1,
+        "english_morpheme_id": 41,
     },
     {
         "value": "lup",
@@ -15,7 +15,7 @@ latin_nouns = [
         "person": 3,
         "language_id": 2,
         "dictionary_id": "latin noun second",
-        "english_morpheme_id": 1,
+        "english_morpheme_id": 42,
     },
     {
         "value": "de",
@@ -50,7 +50,7 @@ latin_nouns = [
         "dictionary_id": "latin noun first"
     },
     {
-        "id": 44,
+        "id": 49,
         "value": "car",
         "grammar": "noun",
         "animacy": 4,
@@ -65,7 +65,7 @@ latin_nouns = [
         "person": 3,
         "language_id": 2,
         "dictionary_id": "latin noun third",
-        "english_morpheme_id": 1,
+        "english_morpheme_id": 43,
     },
     {
         "value": "urs",
@@ -74,6 +74,6 @@ latin_nouns = [
         "person": 3,
         "language_id": 2,
         "dictionary_id": "latin noun second",
-        "english_morpheme_id": 1,
+        "english_morpheme_id": 44,
     }
 ]

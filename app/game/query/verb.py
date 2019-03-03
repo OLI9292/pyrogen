@@ -1,4 +1,5 @@
 import random
+import sys
 
 from app.db.index import session
 from app.db.tables.morpheme import MorphemeModel
@@ -13,49 +14,57 @@ def prepend_verb_ending(language, tense):
     return False
 
 
-def get_copula(language_id, params):
+def get_copula_component(params):
     copula = session.query(MorphemeModel).filter(
-        MorphemeModel.language_id == language_id,
+        MorphemeModel.language_id == params["language_id"],
         MorphemeModel.grammar == "copula"
     ).first()
 
-    declined_copula = decline_verb(language_id, copula, params)
+    declined_copula = decline_verb(params["language_id"], copula, params)
 
-    return [{
+    return {
         "id": copula.id,
         "value": declined_copula,
         "in context": {
             "use": "copula",
         }
-    }]
-
-# def translate_to_english(verb, params):
+    }
 
 
-def get_verb(language_id, use_transitive, params):
+def get_random_verb(language_id, transitive):
     filters = (
         MorphemeModel.language_id == language_id,
         MorphemeModel.grammar == "verb",
-        MorphemeModel.transitive == True,
-        MorphemeModel.english_morpheme_id != None
-    ) if use_transitive else (
+        MorphemeModel.transitive,
+        # MorphemeModel.english_morpheme_id != None
+    ) if transitive else (
         MorphemeModel.language_id == language_id,
         MorphemeModel.grammar == "verb",
-        MorphemeModel.intransitive == True,
-        MorphemeModel.english_morpheme_id != None
+        MorphemeModel.intransitive,
+        # MorphemeModel.english_morpheme_id != None
     )
 
     verbs = session.query(MorphemeModel).filter(*filters).all()
-    verb = random.choice(verbs)
-    declined_verb = decline_verb(language_id, verb, params)
+    return random.choice(verbs)
 
-    return [{
-        "id": verb.id,
-        "value": declined_verb,
-        "in context": {
-            "use": "article",
+
+def get_verb_component(params, verb_id=None):
+    try:
+        verb = session.query(MorphemeModel).get(
+            verb_id) if verb_id else get_random_verb(params["language_id"], params["transitive"])
+        declined_verb = decline_verb(params["language_id"], verb, params)
+        return {
+            "id": verb.id,
+            "english_id": verb.english_morpheme_id,
+            "value": declined_verb,
+            "in context": {
+                "use": "verb",
+            }
         }
-    }]
+    except Exception as error:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        print("ERR: get_verb_component", error, exc_tb.tb_lineno)
+        return []
 
 
 def decline_verb(language_id, verb, params):
