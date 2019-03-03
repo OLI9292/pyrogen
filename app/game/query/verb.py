@@ -15,52 +15,55 @@ def prepend_verb_ending(language, tense):
 
 
 def get_copula_component(params):
-    copula = session.query(MorphemeModel).filter(
+    filters = [
         MorphemeModel.language_id == params["language_id"],
         MorphemeModel.grammar == "copula"
-    ).first()
-
+    ]
+    copula = session.query(MorphemeModel).filter(*filters).first()
     declined_copula = decline_verb(params["language_id"], copula, params)
-
-    return {
+    component = {
         "id": copula.id,
         "value": declined_copula,
         "in context": {
             "use": "copula",
         }
     }
+    return {"params": params, "components": [component]}
 
 
-def get_random_verb(language_id, transitive):
-    filters = (
-        MorphemeModel.language_id == language_id,
+def get_random_verb(params):
+    filters = [
+        MorphemeModel.language_id == params["language_id"],
         MorphemeModel.grammar == "verb",
-        MorphemeModel.transitive,
-        # MorphemeModel.english_morpheme_id != None
-    ) if transitive else (
-        MorphemeModel.language_id == language_id,
-        MorphemeModel.grammar == "verb",
-        MorphemeModel.intransitive,
-        # MorphemeModel.english_morpheme_id != None
-    )
-
+    ]
+    if params["transitive"]:
+        filters.append(MorphemeModel.transitive)
+    else:
+        filters.append(MorphemeModel.intransitive)
+    if not params["translate"]:
+        filters.append(MorphemeModel.english_morpheme_id != None)
     verbs = session.query(MorphemeModel).filter(*filters).all()
     return random.choice(verbs)
 
 
-def get_verb_component(params, verb_id=None):
+def get_verb_component(params):
     try:
         verb = session.query(MorphemeModel).get(
-            verb_id) if verb_id else get_random_verb(params["language_id"], params["transitive"])
+            params["verbs"].pop(0)) if params["translate"] else get_random_verb(params)
         declined_verb = decline_verb(params["language_id"], verb, params)
-        return {
+
+        component = {
             "id": verb.id,
-            "english_id": verb.english_morpheme_id,
             "value": declined_verb,
             "in context": {
                 "use": "verb",
             }
         }
+
+        if not params["translate"]:
+            params["verbs"].append(verb.english_morpheme_id)
+
+        return {"params": params, "components": [component]}
     except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         print("ERR: get_verb_component", error, exc_tb.tb_lineno)

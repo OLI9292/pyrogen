@@ -40,7 +40,13 @@ class Query(graphene.ObjectType):
 
     def resolve_clauses(self, info, language_id, template, tense, number):
         try:
-            return json.dumps([create_clause(language_id, template, tense, number) for i in range(3)])
+            params = {
+                "language_id": language_id,
+                "template": template,
+                "tense": tense,
+                "number": number
+            }
+            return json.dumps([create_clause(params) for i in range(3)])
         except Exception as e:
             print("ERR:", e)
 

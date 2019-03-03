@@ -19,7 +19,7 @@ NUMBERS = ["singular", "plural"]
 CLAUSES = clause_types.keys()
 
 
-def get_english_lanugage_id():
+def get_english_language_id():
     return session.query(LanguageModel).filter(
         LanguageModel.name == "english").first().id
 
@@ -28,15 +28,14 @@ def key_or_random(key, choices):
     return random.choice(choices) if key == "random" else key
 
 
-def clause_params(language_id, template, tense, number):
-    tense = key_or_random(tense, TENSES)
-    number = key_or_random(number, NUMBERS)
-    template = key_or_random(template, CLAUSES)
+def clause_params(params):
+    tense = key_or_random(params["tense"], TENSES)
+    number = key_or_random(params["number"], NUMBERS)
+    template = key_or_random(params["template"], CLAUSES)
     clause = clause_types[template]
 
     return {
-        "language_id": language_id,
-        "english_id": get_english_lanugage_id(),
+        "language_id": params["language_id"],
         "clause_name": clause["full_name"],
         "clause_elements": clause["elements"],
         "tense": tense,
@@ -44,66 +43,50 @@ def clause_params(language_id, template, tense, number):
         "transitive": template == "SVO",
         "add_adjective": True,
         "upper_animacy": 10,
-        "lower_animacy": 1
+        "lower_animacy": 1,
+        "translate": False,
+        "adjectives": [],
+        "nouns": [],
+        "verbs": []
     }
 
 
-def create_clause(language_id, template, tense, number):
-    try:
-        params = clause_params(language_id, template, tense, number)
-        print "\n\n", "clause type: " + params["clause_name"], "\n"
+def get_components(_type, params):
+    if _type == "subject":
+        return get_noun_components(dict(params, **{"_type": "nominative"}))
+    elif _type == "verb":
+        return get_verb_component(params)
+    elif _type == "copula":
+        return get_copula_component(params)
+    elif _type == "object":
+        return get_noun_components(dict(params, **{"_type": "accusative"}))
+    elif _type == "predicate":
+        return get_adjective_component(params)
 
-        clause = []
-        # english_clause = []
 
-        for element in params["clause_elements"]:
-            if element == "subject":
-                data = get_noun_components(
-                    dict(params, **{"_type": "nominative"}))
-                params = data["params"]
-                clause.append(data["components"])
-                # english_clause.append(get_noun_components(
-                #     english_id, params, data["english_noun_id"], data["english_adjective_id"])["components"])
+def create_clause(params):
+    params = params if "clause_name" in params else clause_params(params)
+    print "\n",  "clause type: " + params["clause_name"]
+    clause = []
 
-            elif element == "verb":
-                verb_component = get_verb_component(params)
-                clause.append([verb_component])
-                # english_clause.append([get_verb_component(
-                #     english_id, params, verb_component["english_id"])])
+    for _type in params["clause_elements"]:
+        result = get_components(_type, params)
+        params = result["params"]
+        clause.append(result["components"])
 
-            elif element == "copula":
-                copula_components = get_copula_component(params)
-                clause.append([copula_components])
-                # english_clause.append(
-                #     get_copula_component(english_id, params))
+    flattened = flatten(clause)
+    print_clause(flattened)
 
-            elif element == "object":
-                data = get_noun_components(
-                    dict(params, **{"_type": "accusative"}))
-                clause.append(data["components"])
+    if not params["translate"]:
+        params["language_id"] = get_english_language_id()
+        params["translate"] = True
+        create_clause(params)
 
-                # english_clause.append(get_noun_components(
-                #     english_id, params, data["english_noun_id"], data["english_adjective_id"])["components"])
+    return flattened
 
-            elif element == "predicate":
-                adjective_component = get_adjective_component(params)
-                clause.append([adjective_component])
 
-                # english_clause.append([get_adjective_component(
-                #     english_id, params, adjective_component["english_id"])])
-
-        flattened = flatten(clause)
-        # english_flattened = flatten(english_clause)
-        # print "\n", " ".join([x["value"] for x in flattened]
-        #                      ), " - ", " ".join([x["value"] for x in english_flattened]), "\n\n"
-        return flattened
-
-    except Exception as error:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print("ERR: create_clause", error, exc_type, fname, exc_tb.tb_lineno)
-        return []
-
+def print_clause(clause):
+    print " ".join([x["value"] for x in clause])
 
 # {
 #   TYPE: { type: String, required: true },
