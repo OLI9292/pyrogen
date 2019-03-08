@@ -85,7 +85,7 @@ def migrate():
     # only = ["carnivore", "omnivore", "herbivore"]
     # words = [word for word in words if word["value"] in only]
 
-    for word in words[0:100]:
+    for word in words:
         word_roots = [root for root in roots if root["_id"] in word["roots"]]
         create_word_and_roots(word, word_roots)
 

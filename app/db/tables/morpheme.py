@@ -48,7 +48,7 @@ class MorphemeModel(base):
     english_morpheme = relationship('MorphemeModel')
 
     template_id = Column(String)
-    properties = Column(JSON, default='[]')
+    properties = Column(JSON)
 
 
 def resolve_word(self, info, id):
