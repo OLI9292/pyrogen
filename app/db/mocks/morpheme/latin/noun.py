@@ -56,7 +56,8 @@ latin_nouns = [
         "animacy": 4,
         "person": 3,
         "language_id": 2,
-        "dictionary_id": "latin noun third"
+        "dictionary_id": "latin noun third",
+        "english_morpheme_id": 999,
     },
     {
         "value": "leon",
@@ -75,5 +76,57 @@ latin_nouns = [
         "language_id": 2,
         "dictionary_id": "latin noun second",
         "english_morpheme_id": 44,
+    },
+    # TODO: - no singular (https://en.wiktionary.org/wiki/tres#Latin)
+    {
+        "id": 777,
+        "value": "tres",
+        "grammar": "noun",
+        "animacy": 2,
+        "person": 3,
+        "language_id": 2,
+        "dictionary_id": "latin noun third",
+        "english_morpheme_id": 175,
+    },
+    {
+        "id": 778,
+        "value": "cyclus",
+        "grammar": "noun",
+        "animacy": 2,
+        "person": 3,
+        "language_id": 2,
+        "dictionary_id": "latin noun second",
+        "english_morpheme_id": 176,
+    },
+    {
+        "id": 779,
+        "value": "bi",
+        "grammar": "noun",
+        "animacy": 2,
+        "person": 3,
+        "language_id": 2,
+        "dictionary_id": "latin noun second",
+        "english_morpheme_id": 177,
+    },
+    {
+        "id": 305,
+        "value": "mille",
+        "grammar": "noun",
+        "animacy": 2,
+        "person": 3,
+        "dictionary_id": "latin noun third",
+        "language_id": 1,
+        "english_morpheme_id": 301,
+    },
+    # http://latindictionary.wikidot.com/noun:pes
+    {
+        "id": 306,
+        "value": "pes",
+        "grammar": "noun",
+        "animacy": 2,
+        "person": 3,
+        "dictionary_id": "latin noun third",
+        "language_id": 1,
+        "english_morpheme_id": 302,
     }
 ]

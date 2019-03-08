@@ -13,6 +13,8 @@ from mocks.morpheme.index import morpheme_mocks
 from join_tables.word_morpheme import WordMorphemeModel
 from mocks.word_morpheme import word_morpheme_mocks
 
+LANGUAGES = ["english", "latin"]
+
 
 def table_names():
     names = inspect(db).get_table_names()
@@ -36,10 +38,15 @@ def add(model):
     return session.commit()
 
 
+def setup_db():
+    drop_db()
+    create_schema()
+    for language in LANGUAGES:
+        add(LanguageModel(name=language))
+
+
 def fill_tables(language):
     print("filling " + language + " tables:", table_names())
-
-    add(LanguageModel(name=language))
 
     [add(DictionaryModel(
         id=d.get("id"),
@@ -52,6 +59,7 @@ def fill_tables(language):
         value=m.get("value"),
         grammar=m.get("grammar"),
         free=m.get("free"),
+        definition=m.get("definition"),
         animacy=m.get("animacy"),
         noun_attributes=m.get("noun_attributes"),
         blacklist=m.get("blacklist"),
@@ -60,17 +68,16 @@ def fill_tables(language):
         transitive=m.get("transitive"),
         intransitive=m.get("intransitive"),
         dictionary_id=m.get("dictionary_id"),
+        curriculum_id=m.get("curriculum_id"),
         language_id=m.get("language_id"),
         english_morpheme_id=m.get("english_morpheme_id"),
+        template_id=m.get("template_id"),
+        properties=m.get("properties"),
     )) for m in morpheme_mocks[language]]
 
 
 def seed_db(lang):
-    LANGUAGES = ["english", "latin"]
-
-    drop_db()
-    create_schema()
-
+    setup_db()
     if lang != None:
         fill_tables(lang)
     else:
@@ -81,5 +88,7 @@ def seed_db(lang):
             word_id=w.get("word_id"),
             morpheme_id=w.get("morpheme_id"),
             value=w.get("value"),
-            start_index=w.get("start_index")
+            start_index=w.get("start_index"),
+            definition_start_index=w.get("definition_start_index"),
+            definition_end_index=w.get("definition_end_index"),
         )) for w in word_morpheme_mocks]

@@ -36,12 +36,15 @@ def get_random_verb(params):
         MorphemeModel.language_id == params["language_id"],
         MorphemeModel.grammar == "verb",
     ]
+
     if params["transitive"]:
         filters.append(MorphemeModel.transitive)
     else:
         filters.append(MorphemeModel.intransitive)
-    if not params["translate"]:
+
+    if params["translate"]:
         filters.append(MorphemeModel.english_morpheme_id != None)
+
     verbs = session.query(MorphemeModel).filter(*filters).all()
     return random.choice(verbs)
 
@@ -49,7 +52,7 @@ def get_random_verb(params):
 def get_verb_component(params):
     try:
         verb = session.query(MorphemeModel).get(
-            params["verbs"].pop(0)) if params["translate"] else get_random_verb(params)
+            params["verbs"].pop(0)) if params["verbs"] else get_random_verb(params)
         declined_verb = decline_verb(params["language_id"], verb, params)
 
         component = {
@@ -60,7 +63,7 @@ def get_verb_component(params):
             }
         }
 
-        if not params["translate"]:
+        if params["translate"]:
             params["verbs"].append(verb.english_morpheme_id)
 
         return {"params": params, "components": [component]}
