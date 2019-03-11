@@ -82,73 +82,9 @@ def migrate():
 
     roots = requests.get(ROOTS_URL).json()
     words = requests.get(WORDS_URL).json()
-    # only = ["carnivore", "omnivore", "herbivore"]
-    # words = [word for word in words if word["value"] in only]
 
     for word in words:
         word_roots = [root for root in roots if root["_id"] in word["roots"]]
         create_word_and_roots(word, word_roots)
 
     session.commit()
-
-
-'''
-relationship = {
-    "word_id": 33,
-    "morpheme_id": 49,
-    "value": "carn",
-    "definition_start_index": 20,
-    "definition_end_index": 23,
-    "start_index": 0,
-}
-
-
-carn = {
-    'definitions': ['meat', 'flesh'],
-    '_id': '5a2529dcdbcc27002159ffa0',
-    'value': 'carn',
-    'words': ['5a2529d9dbcc27002159fd5b', '5a2529f1dbcc2700215a077a', '5a252a07dbcc2700215a18ef']
-}
-
-carnivore = {
-    "definition": [
-        {"isRoot": False, "value": "an animal that "},
-        {"isRoot": True, "value": "eat"},
-        {"isRoot": False, "value": "s "},
-        {"isRoot": True, "value": "meat"},
-        {"isRoot": False, "value": ""}
-    ],
-    "obscurity": 1,
-    "sharesRoot": ["reincarnation", "detritivore", "nectarivore", "herbivore", "herbivorous", "detritivorous", "insectivorous", "omnivore", "insectivore", "carnivorous"],
-    "value": "carnivore",
-    "components": [
-        {"componentType": "root", "definition": "meat", "value": "carn"},
-        {"componentType": "separator",  "value": "i"},
-        {"componentType": "root", "definition": "eat", "value": "vor"},
-        {"componentType": None,  "value": "e"}
-    ],
-    "roots": ["5a2529dcdbcc27002159ffa0", "5a2529dcdbcc27002159ffa1"]
-}
-
-new_carnivore = {
-    "id": 33,
-    "value": "carnivore",
-    "grammar": "noun",
-    "definition": "an animal that eats meat",
-    "animacy": 1,
-    "person": 3,
-    "dictionary_id": "noun first",
-    "language_id": 1
-}
-
-new_carn = {
-    "id": 49,
-    "value": "car",
-    "grammar": "noun",
-    "animacy": 4,
-    "person": 3,
-    "language_id": 2,
-    "dictionary_id": "latin noun third",
-    "english_morpheme_id": 999,
-}
-'''

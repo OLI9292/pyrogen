@@ -1,3 +1,4 @@
+import pprint
 import os
 import sys
 import random
@@ -13,6 +14,8 @@ from .data.clause_types import clause_types
 from app.db.tables.language import LanguageModel
 
 from app.lib.helpers import flatten
+
+pp = pprint.PrettyPrinter(indent=2, depth=5)
 
 TENSES = ["present", "past", "future"]
 NUMBERS = ["singular", "plural"]
@@ -89,7 +92,7 @@ def create_clause(params):
 
 
 def print_clause(clause):
-    print " ".join([x["value"] for x in clause])
+    pp.pprint(clause)
 
 # {
 #   TYPE: { type: String, required: true },

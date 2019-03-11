@@ -26,7 +26,11 @@ class Query(graphene.ObjectType):
     languages = graphene.List(Language, resolver=resolve_languages)
 
     words = graphene.List(
-        WordAndMorpheme, curriculum_id=graphene.String(), resolver=resolve_words)
+        WordAndMorpheme,
+        curriculum_id=graphene.String(),
+        count=graphene.Int(required=False, default_value=None),
+        resolver=resolve_words)
+
     word = graphene.Field(
         WordAndMorpheme, id=graphene.Int(), resolver=resolve_word)
 
@@ -87,6 +91,6 @@ if __name__ == '__main__':
     else:
         # seed_db(None)
         port = int(os.environ.get("PORT", 5000))
-        # app.run(host='0.0.0.0', debug=False, port=port)
+        app.run(host='0.0.0.0', debug=False, port=port)
         # Hot Reload (Development)
-        app.run(host='0.0.0.0', debug=True, port=port)
+        # app.run(host='0.0.0.0', debug=True, port=port)

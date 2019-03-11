@@ -3,6 +3,7 @@ import json
 from sqlalchemy import Column, String, Enum, Boolean, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSON, ARRAY
+from sqlalchemy.sql.expression import func
 
 import graphene
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
@@ -51,24 +52,26 @@ class MorphemeModel(base):
     properties = Column(JSON)
 
 
-def resolve_word(self, info, id):
-    try:
-        return session.query(MorphemeModel).get(id)
-    except Exception as error:
-        print("ERR:", error)
-        return {"error": error}
-
-
 def get_word_morphemes(word):
     morphemes = []
+    shares_root = []
     relationships = session.query(WordMorphemeModel).filter(
         WordMorphemeModel.word_id == word.id).all()
-    for relationship in relationships:
-        morpheme = session.query(MorphemeModel).get(
-            relationship.morpheme_id)
-        morphemes.append(Derivation(
-            relationship=relationship, morpheme=morpheme))
-    return WordAndMorpheme(word=word, morphemes=morphemes)
+
+    for r in relationships:
+        morpheme = session.query(MorphemeModel).get(r.morpheme_id)
+        morphemes.append(Derivation(relationship=r, morpheme=morpheme))
+        filters = [
+            WordMorphemeModel.word_id != word.id,
+            WordMorphemeModel.morpheme_id == r.morpheme_id
+        ]
+        other_word_ids = [w.word_id for w in session.query(
+            WordMorphemeModel).filter(*filters).all()]
+        other = session.query(MorphemeModel).filter(
+            MorphemeModel.id.in_(other_word_ids))
+        shares_root += [SharesRoot(id=o.id, value=o.value) for o in other]
+
+    return WordAndMorpheme(word=word, morphemes=morphemes, shares_root=shares_root)
 
 
 def resolve_word(self, info, id):
@@ -76,9 +79,14 @@ def resolve_word(self, info, id):
     return get_word_morphemes(word)
 
 
-def resolve_words(self, info, curriculum_id):
-    words = session.query(MorphemeModel).filter(
-        MorphemeModel.curriculum_id == curriculum_id).all()
+def resolve_words(self, info, curriculum_id, count=None):
+    words = []
+    if count == None:
+        words = session.query(MorphemeModel).filter(
+            MorphemeModel.curriculum_id == curriculum_id).all()
+    else:
+        words = session.query(MorphemeModel).filter(
+            MorphemeModel.curriculum_id == curriculum_id).order_by(func.random()).limit(count)
     return [get_word_morphemes(word) for word in words]
 
 
@@ -113,9 +121,15 @@ class Derivation(graphene.ObjectType):
     morpheme = graphene.Field(Morpheme)
 
 
+class SharesRoot(graphene.ObjectType):
+    id = graphene.Int()
+    value = graphene.String()
+
+
 class WordAndMorpheme(graphene.ObjectType):
     word = graphene.Field(Morpheme)
     morphemes = graphene.List(Derivation)
+    shares_root = graphene.List(SharesRoot)
 
 
 def resolve_morphemes(self, info):
