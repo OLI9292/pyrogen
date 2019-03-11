@@ -33,7 +33,7 @@ def random_noun(params):
         MorphemeModel.animacy <= params["upper_animacy"],
         MorphemeModel.animacy >= params["lower_animacy"],
     ]
-    if not params["translate"]:
+    if params["translate"]:
         filters.append(MorphemeModel.english_morpheme_id != None)
     return random.choice(session.query(MorphemeModel).filter(*filters).all())
 
@@ -45,11 +45,11 @@ def get_noun_components(params):
         noun_type = CASE_TO_TYPE_MAPPING[params["_type"]]
 
         noun = session.query(MorphemeModel).get(
-            params["nouns"].pop(0)) if params["translate"] else random_noun(params)
+            params["nouns"].pop(0)) if params["nouns"] else random_noun(params)
 
         params["person"] = str(noun.person)
 
-        if not params["translate"]:
+        if params["translate"]:
             params["nouns"].append(noun.english_morpheme_id)
 
         declined_noun = decline_noun(noun, params)

@@ -1,3 +1,4 @@
+import pprint
 import os
 import sys
 import random
@@ -13,6 +14,8 @@ from .data.clause_types import clause_types
 from app.db.tables.language import LanguageModel
 
 from app.lib.helpers import flatten
+
+pp = pprint.PrettyPrinter(indent=2, depth=5)
 
 TENSES = ["present", "past", "future"]
 NUMBERS = ["singular", "plural"]
@@ -33,6 +36,7 @@ def clause_params(params):
     number = key_or_random(params["number"], NUMBERS)
     template = key_or_random(params["template"], CLAUSES)
     clause = clause_types[template]
+    translate = params["translate"] if "translate" in params else False
 
     return {
         "language_id": params["language_id"],
@@ -44,7 +48,7 @@ def clause_params(params):
         "add_adjective": True,
         "upper_animacy": 10,
         "lower_animacy": 1,
-        "translate": False,
+        "translate": None,  # get_english_language_id(),
         "adjectives": [],
         "nouns": [],
         "verbs": []
@@ -77,16 +81,18 @@ def create_clause(params):
     flattened = flatten(clause)
     print_clause(flattened)
 
-    if not params["translate"]:
-        params["language_id"] = get_english_language_id()
-        params["translate"] = True
+    if params["translate"]:
+        params["language_id"] = params["translate"]
+        params["translate"] = False
+        for grammar in ["nouns", "adjectives", "verbs"]:
+            params[grammar] = False
         create_clause(params)
 
     return flattened
 
 
 def print_clause(clause):
-    print " ".join([x["value"] for x in clause])
+    pp.pprint(clause)
 
 # {
 #   TYPE: { type: String, required: true },

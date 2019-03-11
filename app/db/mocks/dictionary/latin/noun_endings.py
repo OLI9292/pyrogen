@@ -26,6 +26,7 @@ latin_noun_endings = [
         },
         "language_id": 2
     },
+    # https://en.wiktionary.org/wiki/Appendix:Latin_third_declension
     {
         "id": "latin noun third",
         "data":  {

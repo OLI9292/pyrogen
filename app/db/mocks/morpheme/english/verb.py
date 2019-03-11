@@ -43,5 +43,16 @@ english_verbs = [
         "transitive": True,
         "dictionary_id": "verb first",
         "language_id": 1
+    },
+    {
+        "id": 105,
+        "value": "eat",
+        "irregular": {
+            "past": "ate"
+        },
+        "grammar": "verb",
+        "transitive": True,
+        "dictionary_id": "verb first",
+        "language_id": 1
     }
 ]

@@ -10,7 +10,7 @@ def random_adjective(params):
         MorphemeModel.language_id == params["language_id"],
         MorphemeModel.grammar == "adjective"
     ]
-    if not params["translate"]:
+    if params["translate"]:
         filters.append(MorphemeModel.english_morpheme_id != None)
     return random.choice(session.query(MorphemeModel).filter(*filters).all())
 
@@ -18,12 +18,11 @@ def random_adjective(params):
 def get_adjective_component(params):
     try:
         adjective = session.query(MorphemeModel).get(
-            params["adjectives"].pop(0)) if params["translate"] else random_adjective(params)
+            params["adjectives"].pop(0)) if params["adjectives"] else random_adjective(params)
         declined = decline_adjective(adjective, params)
 
-        if not params["translate"]:
-            params["adjectives"].append(
-                adjective.english_morpheme_id)
+        if params["translate"]:
+            params["adjectives"].append(adjective.english_morpheme_id)
 
         component = {
             "id": adjective.id,

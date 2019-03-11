@@ -14,6 +14,7 @@ latin_verbs = [
         "transitive": True,
         "intransitive": True,
         "language_id": 2,
+        "english_morpheme_id": 105,
         "dictionary_id": "latin verb first"
     },
     {

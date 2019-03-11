@@ -11,15 +11,11 @@ from flask_graphql import GraphQLView
 
 from app.db.seed import seed_db, session
 from app.db.tables.dictionary import DictionaryModel, Dictionary, CreateDictionary, resolve_dictionaries
-from app.db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_word
+from app.db.tables.morpheme import MorphemeModel, Morpheme, CreateMorpheme, resolve_morphemes, resolve_words, WordAndMorpheme, resolve_word
 from app.db.tables.language import LanguageModel, Language, CreateLanguage, resolve_languages
 from app.db.join_tables.word_morpheme import WordMorphemeModel, WordMorpheme
 from app.game.index import create_clause
-
-
-class Derivation(graphene.ObjectType):
-    relationship = graphene.Field(WordMorpheme)
-    morpheme = graphene.Field(Morpheme)
+from app.scripts.import_wordcraft_words import migrate
 
 
 class Query(graphene.ObjectType):
@@ -29,7 +25,14 @@ class Query(graphene.ObjectType):
 
     languages = graphene.List(Language, resolver=resolve_languages)
 
-    word = graphene.Field(Morpheme, id=graphene.Int(), resolver=resolve_word)
+    words = graphene.List(
+        WordAndMorpheme,
+        curriculum_id=graphene.String(),
+        count=graphene.Int(required=False, default_value=None),
+        resolver=resolve_words)
+
+    word = graphene.Field(
+        WordAndMorpheme, id=graphene.Int(), resolver=resolve_word)
 
     clauses = graphene.String(
         language_id=graphene.Int(),
@@ -49,22 +52,6 @@ class Query(graphene.ObjectType):
             return json.dumps([create_clause(params) for i in range(3)])
         except Exception as e:
             print("ERR:", e)
-
-    derived_from = graphene.List(Derivation, id=graphene.Int())
-
-    def resolve_derived_from(self, info, id):
-        relationships = session.query(WordMorphemeModel).filter(
-            WordMorphemeModel.word_id == id).all()
-        derived_from = []
-
-        for relationship in relationships:
-            morpheme = session.query(MorphemeModel).get(
-                relationship.morpheme_id)
-            derivation = Derivation(
-                relationship=relationship, morpheme=morpheme)
-            derived_from.append(derivation)
-
-        return derived_from
 
 
 class Mutation(graphene.ObjectType):
@@ -92,15 +79,18 @@ app.add_url_rule(
 parser = argparse.ArgumentParser()
 parser.add_argument('--lang', help='Language to seed the database')
 parser.add_argument('--seed', help='Seed database')
+parser.add_argument('--migrate', help='Migrate OG Wordcraft')
 args = parser.parse_args()
 
 
 if __name__ == '__main__':
     if args.seed:
         seed_db(args.lang)
+    if args.migrate:
+        migrate()
     else:
-        seed_db(None)
+        # seed_db(None)
         port = int(os.environ.get("PORT", 5000))
-        # app.run(host='0.0.0.0', debug=False, port=port)
+        app.run(host='0.0.0.0', debug=False, port=port)
         # Hot Reload (Development)
-        app.run(host='0.0.0.0', debug=True, port=port)
+        # app.run(host='0.0.0.0', debug=True, port=port)

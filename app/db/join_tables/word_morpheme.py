@@ -13,10 +13,13 @@ class WordMorphemeModel(base):
     word_id = Column(Integer, ForeignKey('morpheme.id'))
     morpheme_id = Column(Integer, ForeignKey('morpheme.id'))
     value = Column(String)
+    definition_start_index = Column(Integer)
+    definition_end_index = Column(Integer)
     start_index = Column(Integer)
 
 
 class WordMorpheme(SQLAlchemyObjectType):
     class Meta:
         model = WordMorphemeModel
-        only_fields = ("id", "word_id", "morpheme_id", "value", "start_index")
+        only_fields = ("id", "word_id", "morpheme_id",
+                       "value", "definition_start_index", "definition_end_index", "start_index")
