@@ -80,14 +80,17 @@ def resolve_word(self, info, id):
 
 
 def resolve_words(self, info, curriculum_id, count=None):
-    words = []
-    if count == None:
-        words = session.query(MorphemeModel).filter(
-            MorphemeModel.curriculum_id == curriculum_id).all()
-    else:
-        words = session.query(MorphemeModel).filter(
-            MorphemeModel.curriculum_id == curriculum_id).order_by(func.random()).limit(count)
-    return [get_word_morphemes(word) for word in words]
+    try:
+        words = []
+        if count == None:
+            words = session.query(MorphemeModel).filter(
+                MorphemeModel.curriculum_id == curriculum_id).all()
+        else:
+            words = session.query(MorphemeModel).filter(
+                MorphemeModel.curriculum_id == curriculum_id).order_by(func.random()).limit(count)
+        return [get_word_morphemes(word) for word in words]
+    except Exception, e:
+        print e.pgerror
 
 
 class Morpheme(SQLAlchemyObjectType):
