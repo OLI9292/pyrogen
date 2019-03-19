@@ -23,9 +23,10 @@ class MorphemeModel(base):
     animacy = Column(Integer)  # move to noun attributes
     transitive = Column(Boolean, default=False)  # move to verb attributes
     intransitive = Column(Boolean, default=False)  # move to verb attributes
+    is_root = Column(Boolean, default=False)
 
     irregular = Column(JSON)
-    definition = Column(String)
+    definition = Column(String, default="")
     # TODO: - able to click off highlighting blacklist_highlight = Column(Array(Integer))
 
     noun_attributes = Column(ARRAY(String))
@@ -90,7 +91,7 @@ def resolve_words(self, info, curriculum_id, count=None):
                 MorphemeModel.curriculum_id == curriculum_id).order_by(func.random()).limit(count)
         return [get_word_morphemes(word) for word in words]
     except Exception, e:
-        print e.pgerror
+        print e
 
 
 class Morpheme(SQLAlchemyObjectType):

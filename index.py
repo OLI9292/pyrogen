@@ -89,8 +89,8 @@ if __name__ == '__main__':
     if args.migrate:
         migrate()
     else:
-        # seed_db(None)
-        port = int(os.environ.get("PORT", 5000))
-        app.run(host='0.0.0.0', debug=False, port=port)
+        seed_db(None)
+        # port = int(os.environ.get("PORT", 5000))
+        # app.run(host='0.0.0.0', debug=False, port=port)
         # Hot Reload (Development)
         # app.run(host='0.0.0.0', debug=True, port=port)
